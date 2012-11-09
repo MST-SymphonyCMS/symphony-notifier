@@ -1,17 +1,6 @@
 <?php
 
 	Class Extension_Notifier extends Extension{
-	    
-		public function fetchNavigation() {
-			return array(
-				array(
-					'location'	=> __('System'),
-					'name'		=> __('Notifier'),
-					'link'		=> '/',
-					'limit'		=> 'developer'
-				)
-			);
-		}
 		
 		public function getSubscribedDelegates(){
 			return array(
@@ -34,34 +23,33 @@
 		}
 		
 		public function notify($context){
-			
 			include_once(TOOLKIT . '/class.gateway.php');
-           	$ch = new Gateway;
-            
-            $ch->init();
-            $ch->setopt('URL', 'http://rpc.pingomatic.com/');
-            $ch->setopt('POST', 1);
-            $ch->setopt('CONTENTTYPE', 'text/xml');
-            
-            $xml = new XMLElement('methodCall');
-            $xml->appendChild(new XMLElement('methodName', 'weblogUpdates.ping'));
-            
-            $params = new XMLElement('params');
-            
-            $param = new XMLElement('param');       
-            $param->appendChild(new XMLElement('value', Symphony::Configuration()->get('sitename', 'general')));
-            $params->appendChild($param);            
-
-            $param = new XMLElement('param');
-            $param->appendChild(new XMLElement('value', URL));
-            $params->appendChild($param);    
-            
-            $xml->appendChild($params);        
+			$ch = new Gateway;
 			
-            $ch->setopt('POSTFIELDS', $xml->generate(true, 0));
+			$ch->init();
+			$ch->setopt('URL', 'http://rpc.pingomatic.com/');
+			$ch->setopt('POST', 1);
+			$ch->setopt('CONTENTTYPE', 'text/xml');
+			
+			$xml = new XMLElement('methodCall');
+			$xml->appendChild(new XMLElement('methodName', 'weblogUpdates.ping'));
+			
+			$params = new XMLElement('params');
+			
+			$param = new XMLElement('param');       
+			$param->appendChild(new XMLElement('value', Symphony::Configuration()->get('sitename', 'general')));
+			$params->appendChild($param);            
 
-            $ch->exec(GATEWAY_FORCE_SOCKET);
-         
+			$param = new XMLElement('param');
+			$param->appendChild(new XMLElement('value', URL));
+			$params->appendChild($param);    
+			
+			$xml->appendChild($params);        
+
+			$ch->setopt('POSTFIELDS', $xml->generate(true, 0));
+
+			$ch->exec(GATEWAY_FORCE_SOCKET);
+
 		}
 		
 	}
