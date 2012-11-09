@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension id="notifier" status="released" xmlns="http://symphony-cms.com/schemas/extension/1.0">
+	<name>Notifier</name>
+	<description>Ping an arbitrary URL when creating, editing or deleting content</description>
+	<repo type="github">https://github.com/theworkers/sym-notifier</repo>
+	<url type="discuss">http://symphony-cms.com/</url>
+	<types>
+		<type>Events</type>
+		<type>Third Party Integration</type>
+	</types>
+	<authors>
+		<author>
+			<name github="theworkers" symphony="theworkers">The Workers</name>
+			<website>http://theworkers.net/</website>
+		</author>
+	</authors>
+	<releases>
+		<release version="1.0" date="2012-03-12" min="2.3.x" />
+	</releases>
+</extension>
