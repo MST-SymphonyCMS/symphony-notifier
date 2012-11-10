@@ -1,7 +1,7 @@
 <?php
 
 	Class Extension_Notifier extends Extension{
-	    
+			
 		public function getSubscribedDelegates(){
 			return array(
 				// Register for preferences
@@ -39,31 +39,33 @@
 		// Controller method
 		public function notify($context){
 			include_once(TOOLKIT . '/class.gateway.php');
-     	$ch = new Gateway;
-      
-      $ch->init();
-      $ch->setopt('URL', 'http://rpc.notifier.com/');
-      $ch->setopt('POST', 1);
-      $ch->setopt('CONTENTTYPE', 'text/xml');
-      
-      $xml = new XMLElement('methodCall');
-      $xml->appendChild(new XMLElement('methodName', 'weblogUpdates.ping'));
-      
-      $params = new XMLElement('params');
-      
-      $param = new XMLElement('param');       
-      $param->appendChild(new XMLElement('value', Symphony::Configuration()->get('sitename', 'general')));
-      $params->appendChild($param);            
+			$ch = new Gateway;
+			
+			$ch->init();
+			$ch->setopt('URL', 'http://rpc.notifier.com/');
+			$ch->setopt('POST', 1);
+			$ch->setopt('CONTENTTYPE', 'text/xml');
 
-      $param = new XMLElement('param');
-      $param->appendChild(new XMLElement('value', URL));
-      $params->appendChild($param);    
-      
-      $xml->appendChild($params);        
+			$url   = Symphony::Configuration()->get('notify_url', 'notifier');
+			
+			$xml = new XMLElement('methodCall');
+			$xml->appendChild(new XMLElement('methodName', 'weblogUpdates.ping'));
+			
+			$params = new XMLElement('params');
+			
+			$param = new XMLElement('param');       
+			$param->appendChild(new XMLElement('value', Symphony::Configuration()->get('sitename', 'general')));
+			$params->appendChild($param);            
 
-      $ch->setopt('POSTFIELDS', $xml->generate(true, 0));
+			$param = new XMLElement('param');
+			$param->appendChild(new XMLElement('value', URL));
+			$params->appendChild($param);    
+			
+			$xml->appendChild($params);        
 
-      $ch->exec(GATEWAY_FORCE_SOCKET);
+			$ch->setopt('POSTFIELDS', $xml->generate(true, 0));
+
+			$ch->exec(GATEWAY_FORCE_SOCKET);
 		}
 
 		
