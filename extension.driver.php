@@ -1,120 +1,222 @@
 <?php
 
-	Class Extension_Notifier extends Extension{
-			
-		public function getSubscribedDelegates(){
-			return array(
-				// Register for preferences
-				array(
-					'page' => '/system/preferences/',
-					'delegate' => 'AddCustomPreferenceFieldsets',
-					'callback' => 'appendPreferences'
-				),
-				array(
-					'page' => '/system/preferences/',
-					'delegate' => 'CustomActions',
-					'callback' => 'savePreferences'
-				),
-
-				// Register for CRUD events
-				array(
-					'page' => '/publish/',
-					'delegate' => 'EntryPreDelete',
-					'callback' => 'notify'
-				),
-				array(
-					'page' => '/publish/new/',
-					'delegate' => 'EntryPostCreate',
-					'callback' => 'notify'
-				),
-				array(
-					'page' => '/publish/edit/',
-					'delegate' => 'EntryPostEdit',
-					'callback' => 'notify'
-				)
-			);
-		}
-
+Class Extension_Notifier extends Extension{
 		
-		// Controller method
-		public function notify($context){
-			include_once(TOOLKIT . '/class.gateway.php');
-			$ch = new Gateway;
-			
-			$ch->init();
-			$ch->setopt('URL', 'http://rpc.notifier.com/');
-			$ch->setopt('POST', 1);
-			$ch->setopt('CONTENTTYPE', 'text/xml');
+	public function getSubscribedDelegates(){
+		return array(
+			// Register for preferences
+			array(
+				'page' => '/system/preferences/',
+				'delegate' => 'AddCustomPreferenceFieldsets',
+				'callback' => 'appendPreferences'
+			),
+			array(
+				'page' => '/system/preferences/',
+				'delegate' => 'CustomActions',
+				'callback' => 'savePreferences'
+			),
 
-			$url   = Symphony::Configuration()->get('notify_url', 'notifier');
-			
-			$xml = new XMLElement('methodCall');
-			$xml->appendChild(new XMLElement('methodName', 'weblogUpdates.ping'));
-			
-			$params = new XMLElement('params');
-			
-			$param = new XMLElement('param');       
-			$param->appendChild(new XMLElement('value', Symphony::Configuration()->get('sitename', 'general')));
-			$params->appendChild($param);            
+			// Register for Enrty CRUD events
+			array(
+				'page' => '/publish/',
+				'delegate' => 'EntryPreDelete',
+				'callback' => 'notify'
+			),
+			array(
+				'page' => '/publish/new/',
+				'delegate' => 'EntryPostCreate',
+				'callback' => 'notify'
+			),
+			array(
+				'page' => '/publish/edit/',
+				'delegate' => 'EntryPostEdit',
+				'callback' => 'notify'
+			),
 
-			$param = new XMLElement('param');
-			$param->appendChild(new XMLElement('value', URL));
-			$params->appendChild($param);    
-			
-			$xml->appendChild($params);        
+			// Register for Datasource CRUD events
+			array(
+				'page'		=> '/blueprints/datasources/',
+				'delegate'	=> 'DatasourcePostCreate',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/blueprints/datasources/',
+				'delegate'	=> 'DatasourcePostEdit',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/blueprints/datasources/',
+				'delegate'	=> 'DatasourcePreDelete',
+				'callback'	=> 'notify'
+			),
 
-			$ch->setopt('POSTFIELDS', $xml->generate(true, 0));
+			// Register for Page CRUD events
+			array(
+				'page'		=> '/blueprints/pages/',
+				'delegate'	=> 'PagePostCreate',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/blueprints/pages/',
+				'delegate'	=> 'PagePostEdit',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/blueprints/pages/',
+				'delegate'	=> 'PagePreDelete',
+				'callback'	=> 'notify'
+			),
 
-			$ch->exec(GATEWAY_FORCE_SOCKET);
-		}
+			// Register for Event CRUD events
+			array(
+				'page'		=> '/blueprints/events/',
+				'delegate'	=> 'EventPostCreate',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/blueprints/events/',
+				'delegate'	=> 'EventPostEdit',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/blueprints/events/',
+				'delegate'	=> 'EventPreDelete',
+				'callback'	=> 'notify'
+			),
 
+			// Register for Utility CRUD events
+			array(
+				'page'		=> '/blueprints/utilities/',
+				'delegate'	=> 'UtilityPostCreate',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/blueprints/utilities/',
+				'delegate'	=> 'UtilityPostEdit',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/blueprints/utilities/',
+				'delegate'	=> 'UtilityPreDelete',
+				'callback'	=> 'notify'
+			),
+
+			// Register for Section CRUD events
+			array(
+				'page'		=> '/blueprints/sections/',
+				'delegate'	=> 'SectionPostCreate',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/blueprints/sections/',
+				'delegate'	=> 'SectionPostEdit',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/blueprints/sections/',
+				'delegate'	=> 'SectionPreDelete',
+				'callback'	=> 'notify'
+			),
+
+			// Register for other system events
+			array(
+				'page'		=> '/system/authors/',
+				'delegate'	=> 'AuthorPostCreate',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/system/authors/',
+				'delegate'	=> 'AuthorPostEdit',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/system/authors/',
+				'delegate'	=> 'AuthorPreDelete',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/system/extensions/',
+				'delegate'	=> 'ExtensionPreEnable',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/system/extensions/',
+				'delegate'	=> 'ExtensionPreDisable',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/system/extensions/',
+				'delegate'	=> 'ExtensionPreUninstall',
+				'callback'	=> 'notify'
+			),
+			array(
+				'page'		=> '/system/preferences/',
+				'delegate'	=> 'Save',
+				'callback'	=> 'notify'
+			)
+		);
+	}
+
+	
+	// Controller method
+	public function notify($context){
+		include_once(TOOLKIT . '/class.gateway.php');
+		$ch = new Gateway;
+		$url = Symphony::Configuration()->get('notify_url', 'notifier');
 		
-		public function appendPreferences($context){
-			include_once(TOOLKIT . '/class.authormanager.php');
-			include_once(TOOLKIT . '/class.sectionmanager.php');
+		$ch->init();
+		$ch->setopt('URL', $url);
+		$ch->setopt('GET', 1);
 
-			// Fieldset and layout
-			$group = new XMLElement('fieldset');
-			$group->setAttribute('class', 'settings');
-			$legend = new XMLElement('legend', __('Notifier'));
-			$group->appendChild($legend);
+		$ch->exec();
+	}
 
-			$div = new XMLElement('div');
-			$div->setAttribute('class', 'group triple');
+	
+	public function appendPreferences($context){
+		include_once(TOOLKIT . '/class.authormanager.php');
+		include_once(TOOLKIT . '/class.sectionmanager.php');
 
+		// Fieldset and layout
+		$group = new XMLElement('fieldset');
+		$group->setAttribute('class', 'settings');
+		$legend = new XMLElement('legend', __('Notifier'));
+		$group->appendChild($legend);
 
-			// Notification URL
-			$label = Widget::Label(__('Notification URL'));
-			$url   = Symphony::Configuration()->get('notify_url', 'notifier');
-			$input = Widget::Input('settings[notifier][notify_url]', $url, 'text');
-
-			$label->appendChild($input);
-			$div->appendChild($label);
-
-			$group->appendChild($div);
-			$context['wrapper']->appendChild($group);
-		}
+		$div = new XMLElement('div');
+		$div->setAttribute('class', 'group triple');
 
 
-		public function savePreferences() {
-			// Remove existing configuration settings.
-			Symphony::Configuration()->remove('notifier');
-			Administration::instance()->saveConfig();
-			
-			// If there are Notifier settings, format them
-			if(is_array($_POST['settings']['notifier'])){
-				foreach($_POST['settings']['notifier'] as $preference => $value){
-					if(is_array($value)){
-						$_POST['settings']['notifier'][$preference] = implode(',',$value);
-					}
+		// Notification URL
+		$label = Widget::Label(__('Notification URL'));
+		$url   = Symphony::Configuration()->get('notify_url', 'notifier');
+		$input = Widget::Input('settings[notifier][notify_url]', $url, 'text');
+
+		$label->appendChild($input);
+		$div->appendChild($label);
+
+		$group->appendChild($div);
+		$context['wrapper']->appendChild($group);
+	}
+
+
+	public function savePreferences() {
+		// Remove existing configuration settings.
+		Symphony::Configuration()->remove('notifier');
+		Administration::instance()->saveConfig();
+		
+		// If there are Notifier settings, format them
+		if(is_array($_POST['settings']['notifier'])){
+			foreach($_POST['settings']['notifier'] as $preference => $value){
+				if(is_array($value)){
+					$_POST['settings']['notifier'][$preference] = implode(',',$value);
 				}
 			}
 		}
-
-
-		public function uninstall() {
-			Symphony::Configuration()->remove('notifier');
-			Administration::instance()->saveConfig();
-		}
-		
 	}
+
+
+	public function uninstall() {
+		Symphony::Configuration()->remove('notifier');
+		Administration::instance()->saveConfig();
+	}	
+}
