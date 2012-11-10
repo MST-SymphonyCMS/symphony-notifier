@@ -34,6 +34,7 @@
 				)
 			);
 		}
+
 		
 		// Controller method
 		public function notify($context){
@@ -79,15 +80,21 @@
 			$div = new XMLElement('div');
 			$div->setAttribute('class', 'group triple');
 
-			// notify url of notifier event
-			$notify_url = Symphony::Configuration()->get('notify_url', 'notifier');
-			$notify_label = Widget::Label(__('Send modification event to URL'));
-			$notify_label->appendChild(Widget::Input('settings[notifier][notify_url]', $notify_url, 'text'));
-			$group->appendChild($notify_label);
+
+			// Notification URL
+			$label = Widget::Label(__('Notification URL'));
+			$url   = Symphony::Configuration()->get('notify_url', 'notifier');
+			$input = Widget::Input('settings[notifier][notify_url]', $url, 'text');
+
+			$label->appendChild($input);
+			$div->appendChild($label);
+
+			$group->appendChild($div);
+			$context['wrapper']->appendChild($group);
 		}
 
+
 		public function savePreferences() {
-		
 			// Remove existing configuration settings.
 			Symphony::Configuration()->remove('notifier');
 			Administration::instance()->saveConfig();
@@ -100,6 +107,12 @@
 					}
 				}
 			}
+		}
+
+
+		public function uninstall() {
+			Symphony::Configuration()->remove('notifier');
+			Administration::instance()->saveConfig();
 		}
 		
 	}
