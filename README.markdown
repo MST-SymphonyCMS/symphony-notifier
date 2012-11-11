@@ -2,5 +2,6 @@
 
 # Installation
 
-1. Upload the 'notifier' folder in this archive to your Symphony 'extensions' folder.
-2. Adding and editing entries will send a ping to the Ping-o-Matic service
+1. Add the 'notifier' folder your Symphony 'extensions' folder.
+2. Set the notification URL in the Symphony preferences under Notifier.
+3. Creating, updating, deleting entries, sections, pages and preferences will send a GET header request to the notification URL you set in (2).
