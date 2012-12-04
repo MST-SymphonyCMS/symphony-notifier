@@ -12,7 +12,7 @@ Class Extension_Notifier extends Extension{
 			),
 			array(
 				'page' => '/system/preferences/',
-				'delegate' => 'CustomActions',
+				'delegate' => 'Save',
 				'callback' => 'savePreferences'
 			),
 
@@ -200,18 +200,14 @@ Class Extension_Notifier extends Extension{
 
 
 	public function savePreferences() {
-		// Remove existing configuration settings.
-		Symphony::Configuration()->remove('notifier');
+		$settings = $_POST['settings'];
+
+		$setting_group = 'general';
+		$setting_name = 'notifier';
+		$setting_value = $settings['general']['notifier'];
+
+		Symphony::Configuration()->set($setting_name, $setting_value, $setting_group);
 		Administration::instance()->saveConfig();
-		
-		// If there are Notifier settings, format them
-		if(is_array($_POST['settings']['notifier'])){
-			foreach($_POST['settings']['notifier'] as $preference => $value){
-				if(is_array($value)){
-					$_POST['settings']['notifier'][$preference] = implode(',',$value);
-				}
-			}
-		}
 	}
 
 
